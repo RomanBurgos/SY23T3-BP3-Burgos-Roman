@@ -1,0 +1,8 @@
+﻿  GameScene.cpp
+  Player.cpp
+  main.cpp
+D:\RomanVictor\College S12\BASPRG3 XTIE1\Works\SY23T3-BP3-Burgos-Roman\SDLTemplate\SDLTemplate\main.cpp(7,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\RomanVictor\College S12\BASPRG3 XTIE1\Works\SY23T3-BP3-Burgos-Roman\SDLTemplate\SDLTemplate\main.cpp(53,12): warning C4244: '=': conversion from 'float' to 'long', possible loss of data
+D:\RomanVictor\College S12\BASPRG3 XTIE1\Works\SY23T3-BP3-Burgos-Roman\SDLTemplate\SDLTemplate\main.cpp(68,21): warning C4305: '+=': truncation from 'double' to 'float'
+  Generating Code...
+  SDLTemplate.vcxproj -> D:\RomanVictor\College S12\BASPRG3 XTIE1\Works\SY23T3-BP3-Burgos-Roman\SDLTemplate\x64\Debug\SDL-Template.exe
