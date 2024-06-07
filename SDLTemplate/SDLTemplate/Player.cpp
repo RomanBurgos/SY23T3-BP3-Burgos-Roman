@@ -82,12 +82,12 @@ void Player::update()
 		Bullet* bullet = new Bullet(x + width, y - 2 + height / 2, 1, 0, 10);
 		bullets.push_back(bullet);
 		getScene()->addGameObject(bullet);
-		bullet->start();
 
 		// after firing reset reload timer
 		currentReloadTime = reloadTime;
 	}
 
+	// second bullet function
 	if (app.keyboard[SDL_SCANCODE_G] && extraCurrentTime == 0)
 	{
 		SoundManager::playSound(sound);
@@ -97,12 +97,9 @@ void Player::update()
 		bullets.push_back(bullet2);
 		getScene()->addGameObject(bullet1);
 		getScene()->addGameObject(bullet2);
-		bullet1->start();
-		bullet2->start();
 
 		//reload timer resets
 		extraCurrentTime = extraReloadTime;
-
 	}
 
 	// when they go off screen, delete the bullet
@@ -122,4 +119,14 @@ void Player::update()
 void Player::draw()
 {
 	blit(texture, x, y);
+}
+
+int Player::getPosX()
+{
+	return x;
+}
+
+int Player::getPosY()
+{
+	return y;
 }
