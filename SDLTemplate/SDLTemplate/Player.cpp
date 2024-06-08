@@ -27,6 +27,7 @@ void Player::start()
 	currentReloadTime = 0;
 	extraReloadTime = 12;
 	extraCurrentTime = 0;
+	isAlive = true;
 
 	// query texture width and height
 	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
@@ -37,6 +38,19 @@ void Player::start()
 
 void Player::update()
 {
+	// when they go off screen, delete the bullet
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		if (bullets[i]->getPositionX() > SCREEN_WIDTH)
+		{
+			// Cache the variable so delete later (leaker pointer)
+			Bullet* bulletToErase = bullets[i];
+			bullets.erase(bullets.begin() + i);
+			delete bulletToErase;
+			break; // delete bullet once per frame
+		}
+	}
+	if (!isAlive) return;
 	// move player
 	if (app.keyboard[SDL_SCANCODE_W])
 	{
@@ -79,7 +93,7 @@ void Player::update()
 	if (app.keyboard[SDL_SCANCODE_F] && currentReloadTime == 0)
 	{
 		SoundManager::playSound(sound);
-		Bullet* bullet = new Bullet(x + width, y - 2 + height / 2, 1, 0, 10);
+		Bullet* bullet = new Bullet(x + width, y - 2 + height / 2, 1, 0, 10, Side::PLAYER_SIDE);
 		bullets.push_back(bullet);
 		getScene()->addGameObject(bullet);
 
@@ -91,8 +105,8 @@ void Player::update()
 	if (app.keyboard[SDL_SCANCODE_G] && extraCurrentTime == 0)
 	{
 		SoundManager::playSound(sound);
-		Bullet* bullet1 = new Bullet(x + width, y - 5 + height / 9, 1, 0, 10);
-		Bullet* bullet2 = new Bullet(x + width, y - 4 + height, 1, 0, 10);
+		Bullet* bullet1 = new Bullet(x + width, y - 5 + height / 9, 1, 0, 10, Side::PLAYER_SIDE);
+		Bullet* bullet2 = new Bullet(x + width, y - 4 + height, 1, 0, 10, Side::PLAYER_SIDE);
 		bullets.push_back(bullet1);
 		bullets.push_back(bullet2);
 		getScene()->addGameObject(bullet1);
@@ -101,23 +115,11 @@ void Player::update()
 		//reload timer resets
 		extraCurrentTime = extraReloadTime;
 	}
-
-	// when they go off screen, delete the bullet
-	for (int i = 0; i < bullets.size(); i++)
-	{
-		if (bullets[i]->getPositionX() > SCREEN_WIDTH)
-		{
-			// Cache the variable so delete later (leaker pointer)
-			Bullet* bulletToErase = bullets[i];
-			bullets.erase(bullets.begin() + i);
-			delete bulletToErase;
-			break; // delete bullet once per frame
-		}
-	}
 }
 
 void Player::draw()
 {
+	if (!isAlive) return;
 	blit(texture, x, y);
 }
 
@@ -129,4 +131,24 @@ int Player::getPosX()
 int Player::getPosY()
 {
 	return y;
+}
+
+int Player::getWidth()
+{
+	return width;
+}
+
+int Player::getHeight()
+{
+	return height;
+}
+
+bool Player::getIsAlive()
+{
+	return isAlive;
+}
+
+void Player::doDeath()
+{
+	isAlive = false;
 }
