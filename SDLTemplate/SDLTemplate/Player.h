@@ -35,5 +35,10 @@ private:
 	float extraCurrentTime;
 	std::vector<Bullet*> bullets;
 	bool isAlive;
+
+	//explosion
+	SDL_Texture* explosionTexture;
+	float explosionTimer;
+	Mix_Chunk* explodeSound;
 };
 

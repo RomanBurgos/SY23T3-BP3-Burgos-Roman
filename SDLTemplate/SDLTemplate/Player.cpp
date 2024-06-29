@@ -15,6 +15,7 @@ void Player::start()
 {
 	// load texture
 	texture = loadTexture("gfx/player.png");
+	explosionTexture = loadTexture("gfx/explosion.png");
 
 	// initialize variables
 	x = 100;
@@ -28,12 +29,15 @@ void Player::start()
 	extraReloadTime = 12;
 	extraCurrentTime = 0;
 	isAlive = true;
+	explosionTimer = 30;
 
 	// query texture width and height
 	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 
 	//calling sound
 	sound = SoundManager::loadSound("sound/334227__jradcoolness__laser.ogg");
+	explodeSound = SoundManager::loadSound("sound/245372__quaker540__hq-explosion.ogg");
+	explodeSound->volume = 10;
 }
 
 void Player::update()
@@ -100,7 +104,6 @@ void Player::update()
 		// after firing reset reload timer
 		currentReloadTime = reloadTime;
 	}
-
 	// second bullet function
 	if (app.keyboard[SDL_SCANCODE_G] && extraCurrentTime == 0)
 	{
@@ -119,7 +122,16 @@ void Player::update()
 
 void Player::draw()
 {
-	if (!isAlive) return;
+	if (!isAlive)
+	{
+		if (explosionTimer > 0)
+		{
+			blit(explosionTexture, x, y);
+			explosionTimer--;
+			SoundManager::playSound(explodeSound);
+		}
+		return;
+	}		
 	blit(texture, x, y);
 }
 

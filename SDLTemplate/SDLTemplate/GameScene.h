@@ -6,6 +6,12 @@
 #include <vector>
 #include "text.h"
 
+struct Explosion
+{
+	int x, y;
+	float timer;
+};
+
 class GameScene : public Scene
 {
 public:
@@ -14,7 +20,10 @@ public:
 	void start();
 	void draw();
 	void update();
+
+	void drawBackground(SDL_Texture* texture);
 private:
+	SDL_Texture* bgTexture;
 	Player* player;
 
 	// enemy spawner logic	
@@ -27,6 +36,10 @@ private:
 	void spawn();
 	void despawn(Enemy* enemy);
 
+	// explosion logic
+	SDL_Texture* explosion;
+	Mix_Chunk* explosionSound;
+	float explosionTimer;
 	int points;
 };
 

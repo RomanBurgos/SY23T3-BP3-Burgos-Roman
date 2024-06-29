@@ -5,8 +5,10 @@ GameScene::GameScene()
 	// Register and add game objects on constructor
 	player = new Player();
 	this->addGameObject(player); // always do this to game objects
-
 	points = 0;
+
+	//calling sound
+	explosionSound = SoundManager::loadSound("sound/245372__quaker540__hq-explosion.ogg");
 }
 
 GameScene::~GameScene()
@@ -16,12 +18,14 @@ GameScene::~GameScene()
 
 void GameScene::start()
 {
+	bgTexture = loadTexture("gfx/background.png");
 	Scene::start();
 	// Initialize any scene logic here
-
+	explosion = loadTexture("gfx/explosion.png");
 	initFonts();
 	currentSpawnTime = 300;
 	spawnTime = 300; // 5 secs
+	explosionTimer = 60;
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -31,10 +35,9 @@ void GameScene::start()
 
 void GameScene::draw()
 {
+	drawBackground(bgTexture);
 	Scene::draw();
-
 	drawText(110, 20, 255, 255, 255, TEXT_CENTER, "POINTS: %03d", points);
-
 	if (player->getIsAlive() == false)
 	{
 		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 255, 255, 255, TEXT_CENTER, "GAME OVER");
@@ -70,7 +73,6 @@ void GameScene::collisionLogic()
 	{
 		// cast bullet
 		Bullet* bullet = dynamic_cast<Bullet*>(objects[i]);
-
 		// null check
 		if (bullet != NULL)
 		{
@@ -113,7 +115,6 @@ void GameScene::spawn()
 	Enemy* enemy = new Enemy();
 	this->addGameObject(enemy);
 	enemy->setPlayerTarget(player);
-
 	enemy->setPosition(1300, 300 + (rand() % 300));
 	spawnedEnemies.push_back(enemy);
 	currentSpawnTime = spawnTime;
@@ -126,6 +127,12 @@ void GameScene::despawn(Enemy* enemy)
 	{
 		if (enemy == spawnedEnemies[i]) // if the pointer match
 		{
+			SoundManager::playSound(explosionSound);
+			if (explosionTimer > 0)
+			{
+				blit(explosion, enemy->getPosX(), enemy->getPosY());
+				explosionTimer--;
+			}
 			index = i;
 			break;
 		}
@@ -133,7 +140,14 @@ void GameScene::despawn(Enemy* enemy)
 
 	if (index != -1) // if match is found
 	{
+		/*explosions.push_back({ enemy->getPosX(), enemy->getPosY(), explosionTimer });*/
 		spawnedEnemies.erase(spawnedEnemies.begin() + index);
 		delete enemy;
 	}
+}
+
+void GameScene::drawBackground(SDL_Texture* texture)
+{
+	SDL_Rect desRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	SDL_RenderCopy(app.renderer, texture, NULL, &desRect);
 }
