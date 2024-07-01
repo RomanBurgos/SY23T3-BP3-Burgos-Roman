@@ -20,8 +20,6 @@ public:
 	void start();
 	void draw();
 	void update();
-
-	void drawBackground(SDL_Texture* texture);
 private:
 	SDL_Texture* bgTexture;
 	Player* player;
@@ -35,6 +33,7 @@ private:
 	void collisionLogic();
 	void spawn();
 	void despawn(Enemy* enemy);
+	void offScreenEnemies(Enemy* enemy);
 
 	// explosion logic
 	SDL_Texture* explosion;

@@ -35,7 +35,9 @@ void GameScene::start()
 
 void GameScene::draw()
 {
-	drawBackground(bgTexture);
+	int width;
+	int height;
+	blitScale(bgTexture, 0, 0, &width, &height, 2);
 	Scene::draw();
 	drawText(110, 20, 255, 255, 255, TEXT_CENTER, "POINTS: %03d", points);
 	if (player->getIsAlive() == false)
@@ -84,6 +86,7 @@ void GameScene::collisionLogic()
 					bullet->getPositionX(), bullet->getPositionY(), bullet->getWidth(), bullet->getHeight());
 				if (collision == 1) // if collided
 				{
+					/*SoundManager::playSound(explosionSound);*/
 					player->doDeath();
 					break;
 				}
@@ -115,7 +118,7 @@ void GameScene::spawn()
 	Enemy* enemy = new Enemy();
 	this->addGameObject(enemy);
 	enemy->setPlayerTarget(player);
-	enemy->setPosition(1300, 300 + (rand() % 300));
+	enemy->setPosition(100 + (rand() % 400), 100);
 	spawnedEnemies.push_back(enemy);
 	currentSpawnTime = spawnTime;
 }
@@ -140,14 +143,20 @@ void GameScene::despawn(Enemy* enemy)
 
 	if (index != -1) // if match is found
 	{
-		/*explosions.push_back({ enemy->getPosX(), enemy->getPosY(), explosionTimer });*/
 		spawnedEnemies.erase(spawnedEnemies.begin() + index);
 		delete enemy;
 	}
 }
 
-void GameScene::drawBackground(SDL_Texture* texture)
+void GameScene::offScreenEnemies(Enemy* enemy)
 {
-	SDL_Rect desRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-	SDL_RenderCopy(app.renderer, texture, NULL, &desRect);
+	for (int i = 0; i < spawnedEnemies.size(); i++)
+	{
+		enemy = spawnedEnemies[i];
+		if (enemy->getPosX() > SCREEN_WIDTH + 300 || enemy->getPosX() < -300 ||
+			enemy->getPosY() > SCREEN_HEIGHT + 300 || enemy->getPosY() < -300)
+		{
+			despawn(enemy);
+		}
+	}
 }

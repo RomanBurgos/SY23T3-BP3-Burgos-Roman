@@ -18,8 +18,8 @@ void Player::start()
 	explosionTexture = loadTexture("gfx/explosion.png");
 
 	// initialize variables
-	x = 100;
-	y = 100;
+	x = SCREEN_WIDTH / 2;
+	y = 700;
 	width = 0;
 	height = 0;
 	speed = 2;
@@ -36,8 +36,6 @@ void Player::start()
 
 	//calling sound
 	sound = SoundManager::loadSound("sound/334227__jradcoolness__laser.ogg");
-	explodeSound = SoundManager::loadSound("sound/245372__quaker540__hq-explosion.ogg");
-	explodeSound->volume = 10;
 }
 
 void Player::update()
@@ -45,7 +43,7 @@ void Player::update()
 	// when they go off screen, delete the bullet
 	for (int i = 0; i < bullets.size(); i++)
 	{
-		if (bullets[i]->getPositionX() > SCREEN_WIDTH)
+		if (bullets[i]->getPositionY() > SCREEN_HEIGHT)
 		{
 			// Cache the variable so delete later (leaker pointer)
 			Bullet* bulletToErase = bullets[i];
@@ -97,7 +95,7 @@ void Player::update()
 	if (app.keyboard[SDL_SCANCODE_F] && currentReloadTime == 0)
 	{
 		SoundManager::playSound(sound);
-		Bullet* bullet = new Bullet(x + width, y - 2 + height / 2, 1, 0, 10, Side::PLAYER_SIDE);
+		Bullet* bullet = new Bullet(x - 4 + width / 2, y - height / 2, 0, -1, 10, Side::PLAYER_SIDE);
 		bullets.push_back(bullet);
 		getScene()->addGameObject(bullet);
 
@@ -105,19 +103,18 @@ void Player::update()
 		currentReloadTime = reloadTime;
 	}
 	// second bullet function
-	if (app.keyboard[SDL_SCANCODE_G] && extraCurrentTime == 0)
-	{
-		SoundManager::playSound(sound);
-		Bullet* bullet1 = new Bullet(x + width, y - 5 + height / 9, 1, 0, 10, Side::PLAYER_SIDE);
-		Bullet* bullet2 = new Bullet(x + width, y - 4 + height, 1, 0, 10, Side::PLAYER_SIDE);
-		bullets.push_back(bullet1);
-		bullets.push_back(bullet2);
-		getScene()->addGameObject(bullet1);
-		getScene()->addGameObject(bullet2);
-
-		//reload timer resets
-		extraCurrentTime = extraReloadTime;
-	}
+	//if (app.keyboard[SDL_SCANCODE_G] && extraCurrentTime == 0)
+	//{
+	//	SoundManager::playSound(sound);
+	//	Bullet* bullet1 = new Bullet(x + width, y - 5 + height / 9, 1, 0, 10, Side::PLAYER_SIDE);
+	//	Bullet* bullet2 = new Bullet(x + width, y - 4 + height, 1, 0, 10, Side::PLAYER_SIDE);
+	//	bullets.push_back(bullet1);
+	//	bullets.push_back(bullet2);
+	//	getScene()->addGameObject(bullet1);
+	//	getScene()->addGameObject(bullet2);
+	//	//reload timer resets
+	//	extraCurrentTime = extraReloadTime;
+	//}
 }
 
 void Player::draw()
@@ -128,7 +125,6 @@ void Player::draw()
 		{
 			blit(explosionTexture, x, y);
 			explosionTimer--;
-			SoundManager::playSound(explodeSound);
 		}
 		return;
 	}		
