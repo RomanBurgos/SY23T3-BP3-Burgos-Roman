@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include <vector>
 #include "text.h"
+#include "PowerOrbs.h"
 
 struct Explosion
 {
@@ -40,5 +41,16 @@ private:
 	Mix_Chunk* explosionSound;
 	float explosionTimer;
 	int points;
+
+	// power up logic
+	float pSpawnTimer;
+	float pCurrentTimer;
+	float pExpireTimer;
+	float pCurrentExpireTimer;
+	PowerOrbs* powers;
+	void spawnOrbLogic();
+	void orbCollisionLogic();
+	void spawnOrb();
+	void despawnOrb(PowerOrbs* orb);
 };
 

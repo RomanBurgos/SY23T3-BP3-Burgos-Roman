@@ -20,6 +20,8 @@ public:
 	int getHeight();
 	bool getIsAlive();
 	void doDeath();
+	
+	int setOrbCount(int add);
 private:
 	SDL_Texture* texture;
 	Mix_Chunk* sound;
@@ -39,5 +41,8 @@ private:
 	//explosion
 	SDL_Texture* explosionTexture;
 	float explosionTimer;
+
+	// powerCounterLogic
+	int orbCounter;
 };
 

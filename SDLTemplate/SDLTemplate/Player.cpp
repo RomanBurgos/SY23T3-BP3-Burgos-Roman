@@ -101,20 +101,17 @@ void Player::update()
 
 		// after firing reset reload timer
 		currentReloadTime = reloadTime;
+		if (orbCounter != 0) // count null
+		{
+			for (int i = 0; i < orbCounter; i++) // counts
+			{
+				Bullet* bulletExtra = new Bullet(x + (rand() % width), y - height / 2, 0, -1, 10, Side::PLAYER_SIDE);
+				bullets.push_back(bulletExtra);
+				getScene()->addGameObject(bulletExtra);
+				extraCurrentTime = extraReloadTime;
+			}
+		}
 	}
-	// second bullet function
-	//if (app.keyboard[SDL_SCANCODE_G] && extraCurrentTime == 0)
-	//{
-	//	SoundManager::playSound(sound);
-	//	Bullet* bullet1 = new Bullet(x + width, y - 5 + height / 9, 1, 0, 10, Side::PLAYER_SIDE);
-	//	Bullet* bullet2 = new Bullet(x + width, y - 4 + height, 1, 0, 10, Side::PLAYER_SIDE);
-	//	bullets.push_back(bullet1);
-	//	bullets.push_back(bullet2);
-	//	getScene()->addGameObject(bullet1);
-	//	getScene()->addGameObject(bullet2);
-	//	//reload timer resets
-	//	extraCurrentTime = extraReloadTime;
-	//}
 }
 
 void Player::draw()
@@ -159,4 +156,9 @@ bool Player::getIsAlive()
 void Player::doDeath()
 {
 	isAlive = false;
+}
+
+int Player::setOrbCount(int add)
+{
+	return orbCounter += add;
 }

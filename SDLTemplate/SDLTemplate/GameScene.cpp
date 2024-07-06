@@ -26,6 +26,11 @@ void GameScene::start()
 	currentSpawnTime = 300;
 	spawnTime = 300; // 5 secs
 	explosionTimer = 60;
+	// orb timer
+	pSpawnTimer = 3600;
+	pCurrentTimer = 3600;
+	pExpireTimer = 600;
+	pCurrentExpireTimer = 600;
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -51,6 +56,8 @@ void GameScene::update()
 	Scene::update();
 	spawnLogic();
 	collisionLogic();
+	spawnOrbLogic();
+	orbCollisionLogic();
 }
 
 void GameScene::spawnLogic()
@@ -86,7 +93,6 @@ void GameScene::collisionLogic()
 					bullet->getPositionX(), bullet->getPositionY(), bullet->getWidth(), bullet->getHeight());
 				if (collision == 1) // if collided
 				{
-					/*SoundManager::playSound(explosionSound);*/
 					player->doDeath();
 					break;
 				}
@@ -159,4 +165,59 @@ void GameScene::offScreenEnemies(Enemy* enemy)
 			despawn(enemy);
 		}
 	}
+}
+
+void GameScene::spawnOrbLogic()
+{
+	if (pCurrentTimer > 0)
+		pCurrentTimer--;
+
+	if (pCurrentTimer <= 0)
+	{
+		spawnOrb();
+		pCurrentTimer = pSpawnTimer;
+		pCurrentExpireTimer = pExpireTimer;
+	}
+
+	if (pCurrentExpireTimer > 0) // expire timer
+		pCurrentExpireTimer--;
+	if (pCurrentExpireTimer <= 0) // despawn
+	{
+		despawnOrb(powers);
+	}
+}
+
+void GameScene::orbCollisionLogic()
+{
+	// check collisions
+	for (int i = 0; i < objects.size(); i++)
+	{
+		// cast powerOrb
+		PowerOrbs* orb = dynamic_cast<PowerOrbs*>(objects[i]);
+		// null check
+		if (orb != NULL)
+		{
+			int collision = checkCollision(
+				player->getPosX(), player->getPosY(), player->getWidth(), player->getHeight(),
+				orb->getPosX(), orb->getPosY(), orb->getWidth(), orb->getHeight());
+			if (collision == 1) // if collided
+			{
+				player->setOrbCount(1); // add
+				despawnOrb(orb);
+				break;
+			}
+		}
+	}
+}
+
+void GameScene::spawnOrb() // new orb
+{
+	powers = new PowerOrbs();
+	this->addGameObject(powers);
+	powers->setPosition(1 + (rand() % 720), 100 + (rand() % 540));
+}
+
+void GameScene::despawnOrb(PowerOrbs* orb)
+{
+	delete orb;
 }
