@@ -6,6 +6,7 @@
 #include <vector>
 #include "text.h"
 #include "PowerOrbs.h"
+#include "Boss.h"
 
 struct Explosion
 {
@@ -35,6 +36,7 @@ private:
 	void spawn();
 	void despawn(Enemy* enemy);
 	void offScreenEnemies(Enemy* enemy);
+	void despawnAllEnemies();
 
 	// explosion logic
 	SDL_Texture* explosion;
@@ -52,5 +54,10 @@ private:
 	void orbCollisionLogic();
 	void spawnOrb();
 	void despawnOrb(PowerOrbs* orb);
+
+	// boss logic
+	Boss* spawnedBoss;
+	bool bossSpawned;
+	void despawnBoss();
 };
 

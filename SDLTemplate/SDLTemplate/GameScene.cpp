@@ -7,6 +7,9 @@ GameScene::GameScene()
 	this->addGameObject(player); // always do this to game objects
 	points = 0;
 
+	spawnedBoss = nullptr;
+	bossSpawned = false;
+
 	//calling sound
 	explosionSound = SoundManager::loadSound("sound/245372__quaker540__hq-explosion.ogg");
 }
@@ -27,8 +30,8 @@ void GameScene::start()
 	spawnTime = 300; // 5 secs
 	explosionTimer = 60;
 	// orb timer
-	pSpawnTimer = 3600;
-	pCurrentTimer = 3600;
+	pSpawnTimer = 1800;
+	pCurrentTimer = 1800;
 	pExpireTimer = 600;
 	pCurrentExpireTimer = 600;
 
@@ -44,24 +47,49 @@ void GameScene::draw()
 	int height;
 	blitScale(bgTexture, 0, 0, &width, &height, 2);
 	Scene::draw();
-	drawText(110, 20, 255, 255, 255, TEXT_CENTER, "POINTS: %03d", points);
+	drawText(110, 840, 255, 255, 255, TEXT_CENTER, "POINTS: %03d", points);
 	if (player->getIsAlive() == false)
 	{
 		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 255, 255, 255, TEXT_CENTER, "GAME OVER");
+		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200, 255, 255, 255, TEXT_CENTER, "PRESS SPACE TO EXIT");
 	}
 }
 
 void GameScene::update()
 {
 	Scene::update();
-	spawnLogic();
 	collisionLogic();
-	spawnOrbLogic();
 	orbCollisionLogic();
+	if (points >= 100 && !bossSpawned)
+	{
+		bossSpawned = true;
+		despawnAllEnemies();
+		spawnedBoss = new Boss();
+		this->addGameObject(spawnedBoss);
+		spawnedBoss->setPlayerTarget(player);
+		spawnedBoss->setPosition(314, 150);
+;	}
+
+	if (bossSpawned)
+	{
+		if (!spawnedBoss->getIsAlive())
+		{
+			despawnBoss();
+			bossSpawned = false;
+			currentSpawnTime = spawnTime;
+		}
+	}
+	else
+	{
+		spawnLogic();
+		spawnOrbLogic();
+	}
 }
 
 void GameScene::spawnLogic()
 {
+	if (bossSpawned) return; // if boss is alive then dont spawn
+
 	if (currentSpawnTime > 0)
 		currentSpawnTime--;
 
@@ -115,6 +143,23 @@ void GameScene::collisionLogic()
 					}
 				}
 			}
+			else if (bullet->getSide() == Side::PLAYER_SIDE && bossSpawned && spawnedBoss->getIsAlive())
+			{
+				int collision = checkCollision(
+					spawnedBoss->getPosX(), spawnedBoss->getPosY(), spawnedBoss->getWidth(), spawnedBoss->getHeight(),
+					bullet->getPositionX(), bullet->getPositionY(), bullet->getWidth(), bullet->getHeight());
+				if (collision == 1)
+				{
+					spawnedBoss->damage(1); // do dmg
+					points += 1;
+					if (!spawnedBoss->getIsAlive())
+					{
+						points += 10;
+						despawnBoss();
+					}
+				}
+				break;
+			}
 		}
 	}
 }
@@ -165,6 +210,15 @@ void GameScene::offScreenEnemies(Enemy* enemy)
 			despawn(enemy);
 		}
 	}
+}
+
+void GameScene::despawnAllEnemies()
+{
+	for (int i = 0; i < spawnedEnemies.size(); i++)
+	{
+		delete spawnedEnemies[i];
+	}
+	spawnedEnemies.clear();
 }
 
 void GameScene::spawnOrbLogic()
@@ -220,4 +274,14 @@ void GameScene::spawnOrb() // new orb
 void GameScene::despawnOrb(PowerOrbs* orb)
 {
 	delete orb;
+}
+
+void GameScene::despawnBoss()
+{
+	if (spawnedBoss != nullptr)
+	{
+		delete spawnedBoss;
+		spawnedBoss = nullptr;
+		bossSpawned = false;
+	}
 }
