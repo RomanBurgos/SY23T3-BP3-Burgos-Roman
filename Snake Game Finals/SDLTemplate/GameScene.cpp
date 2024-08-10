@@ -57,6 +57,7 @@ void GameScene::resetGame()
 {
 	player->reset();
 	score = 0;
+	despawnAllFood();
 }
 
 
