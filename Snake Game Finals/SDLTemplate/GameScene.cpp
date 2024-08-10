@@ -105,6 +105,7 @@ void GameScene::foodCollisionLogic()
 				SoundManager::playSound(soundFeed);
 				score += 1; // add
 				despawnFood(selFood);
+				player->grow();
 				break;
 			}
 		}
