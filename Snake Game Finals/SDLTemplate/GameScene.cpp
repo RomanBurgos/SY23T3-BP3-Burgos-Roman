@@ -63,12 +63,13 @@ void GameScene::resetGame()
 
 void GameScene::updateScore()
 {
-	drawText(80, 5, 255, 255, 255, TEXT_CENTER, "SCORE: %d", score);
-	drawText(360, 5, 255, 255, 255, TEXT_CENTER, "HIGH SCORE: %d", highScore);
+	drawText(100, 20, 255, 255, 255, TEXT_CENTER, "SCORE: %d", score);
+	drawText(360, 20, 255, 255, 255, TEXT_CENTER, "HIGH SCORE: %d", highScore);
 	if (!player->isAlive())
 	{
 		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 255, 0, 0, TEXT_CENTER, "GAME OVER!");
-		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30, 255, 255, 255, TEXT_CENTER, "PRESS 'SPACE' TO RESTART OR 'Q' TO QUIT");
+		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 140, 255, 255, 255, TEXT_CENTER, "PRESS 'SPACE' RESTART");
+		drawText(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 170, 255, 255, 255, TEXT_CENTER, "PRESS 'Q' QUIT/EXIT");
 		if (highScore < score)
 		{
 			highScore = score;
